@@ -1,0 +1,45 @@
+{
+  "official_dataset": "NYC 311 Service Requests from 2020 to Present, erm2-nwe9",
+  "source": "https://data.cityofnewyork.us/d/erm2-nwe9",
+  "sample_dates": "2024-10-01 to 2025-05-31",
+  "total_requests": 280427,
+  "missing_closed_date": 4241,
+  "excluded_negative_duration": 0,
+  "usable_closed_requests": 276186,
+  "delay_threshold_hours": 72,
+  "delayed_closed_requests": 48695,
+  "delayed_percentage": 17.63,
+  "median_closure_hours": 42.0,
+  "training_records": 226910,
+  "testing_records": 49276,
+  "model_results": [
+    {
+      "model": "Logistic regression",
+      "ROC_AUC": 0.6874,
+      "PR_AUC": 0.128,
+      "Brier": 0.0736,
+      "precision_at_0.5": 0.2533,
+      "recall_at_0.5": 0.0148,
+      "f1_at_0.5": 0.028
+    },
+    {
+      "model": "Random forest",
+      "ROC_AUC": 0.6974,
+      "PR_AUC": 0.1237,
+      "Brier": 0.0686,
+      "precision_at_0.5": 0.0,
+      "recall_at_0.5": 0.0,
+      "f1_at_0.5": 0.0
+    },
+    {
+      "model": "Prior-only baseline",
+      "ROC_AUC": 0.5,
+      "PR_AUC": 0.0521,
+      "Brier": 0.0722,
+      "precision_at_0.5": 0.0,
+      "recall_at_0.5": 0.0,
+      "f1_at_0.5": 0.0
+    }
+  ],
+  "important_caveat": "Closure date is an administrative endpoint, not evidence that heat was repaired."
+}
