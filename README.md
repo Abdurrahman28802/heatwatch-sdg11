@@ -1,77 +1,77 @@
-# HeatWatch: NYC heating complaint closure delays
+# HeatWatch NYC · SDG 11
 
-**Samsung Innovation Campus — AI for the SDGs, Assignment 1**  
-**Group 11:** Mert Sürmeli, Mehmet Batu Solar, Abdurrahman Dıraz  
-**Sustainable Development Goal:** SDG 11 — Sustainable Cities and Communities (Target 11.1)
+**Building-level prediction of future NYC heating and hot-water 311 complaints**  
+Samsung Innovation Campus · Yıldız Technical University · Group 11  
+Mert Sürmeli · Mehmet Batu Solar · Abdurrahman Dıraz  
+Updated: **30 October 2026**
 
-## What is the project about?
+## What changed since Assignment 1?
+Assignment 1 predicted whether a **single complaint would remain open for over 72 hours** in the 2024–25 heating season. The revised research question is:
 
-New York City residents can submit 311 service requests when their heat or hot water is not working. We study whether details available **when a request is opened** help predict if the request will remain open for more than **72 hours**. We chose 72 hours as a research threshold, not as an official city service deadline.
+> On 30 September, can we rank HPD-registered NYC buildings by the chance of receiving at least one heating/hot-water complaint during the following winter (1 Oct–31 May)?
 
-An important distinction: **closing a 311 request is not proof that the heating problem was fixed.** Our target is the *administrative closure time*, not repair time.
+Our secondary H2 target is **at least three complaints during the season**, and a third target is complaint count. These labels capture **reported 311 complaints, not actual defects, repair completion, energy poverty, or causal impact of an inspection**.
 
-## Data
+## Evidence and reported outcomes
 
-- Official source: [NYC Open Data — 311 Service Requests from 2020 to Present](https://data.cityofnewyork.us/d/erm2-nwe9)
-- Category: `HEAT/HOT WATER`
-- Request creation dates: **October 1, 2024 – May 31, 2025**
-- Records retrieved during our analysis: **280,427**
-- Records with a usable closing date and nonnegative duration: **276,186**
-- Records with missing closing dates excluded from supervised learning: **4,241**
+- Six winters: 2020–21 through 2025–26; 1,482,923 311 complaint rows reported in the study.
+- Analysis universe: 183,417 building BBLs based on a current HPD registration snapshot.
+- NOAA Central Park temperature vs daily complaints: Spearman rho **−0.864** (descriptive, not causal).
+- Validation winter 2024–25: 311-history-only HistGB ROC-AUC **0.8452**; +PLUTO **0.8862**; adding HPD violations to 311 history **0.8470**.
+- Held-out winter 2025–26: HistGB ROC-AUC **0.8853** from supplied rolling-test summary.
+- The 19-page report additionally states **93.9% precision among the top 10,000 buildings** and H2 ROC-AUC **0.936**. These two results are **not independently reconstructible from the supplied Stage 5C/6C summary archives**; original metric outputs and notebook are needed.
+- Label-permutation sanity check: ROC-AUC **0.4464**; still unexplained.
 
-We do not upload the original request-level dataset or names, addresses and precise locations to this repository. The notebook retrieves the public records directly from the official city API. The **summary tables** and **aggregate figures** are included here.
+**Read [the revised report](docs/HeatWatch_NYC_Rapor_Guncel.pdf) and [presentation](docs/HeatWatch_NYC_Sunum_Guncel.pdf) before interpreting metrics.**
 
-## Exploratory findings
+## Repository status / transparency
 
-- **17.63%** of usable closed records were closed more than 72 hours after opening.
-- Median administrative closure time was **42 hours**.
-- The largest number of requests in the selected period occurred in **January 2025**.
-- The percentage of records exceeding 72 hours differs by borough. These differences are descriptive and do not establish causation.
+This package contains:
 
-Figures created from the study are in [`figures/`](figures/).
+- Revised report and presentation (`docs/`).
+- The *provided* aggregated Stage 5C/6C CSV/JSON outputs (`results/`).
+- A small, reproducible **results-review Streamlit dashboard** (`app.py`) that visualizes those aggregate artifacts.
+- Local output consistency checks (`scripts/validate_results.py`).
+- Data provenance and known limitations (`docs/DATA_SOURCES.md`, `docs/LIMITATIONS.md`).
 
-## First machine-learning experiment
+**Not included in the supplied materials:** original Colab data ingestion/training notebooks, the fitted model artifact, original deployed Streamlit source, raw data, and the per-building 2026–27 risk list. The dashboard is **not** the original live model and **cannot calculate new 2026–27 risk probabilities**. Uploading a genuine per-building risk CSV allows the dashboard to display and export precomputed rankings; it does not train a model.
 
-We use only information known at request opening: **borough, complaint description, month, weekday and hour**. Request closing date or final resolution text is *not* passed into the predictor.
+If you already have Assignment 1 files in this repository, keep them for historical documentation. The original root README should be replaced with this file after preserving a backup; old Assignment 1 analysis does not describe the current target.
 
-- Training: October 2024 – February 2025 (226,910 records)
-- Testing: March 2025 – May 2025 (49,276 records)
-- Methods: constant prior baseline, logistic regression, and random forest
+## Run the review dashboard
 
-| Model | Test ROC-AUC | Test PR-AUC | Test Brier score |
-|---|---:|---:|---:|
-| Prior-only baseline | 0.500 | 0.052 | 0.0722 |
-| Logistic regression | 0.687 | **0.128** | 0.0736 |
-| Random forest | **0.697** | 0.124 | **0.0686** |
+```bash
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-The results are **preliminary**. The delayed-case percentage is **20.33% during training** but **5.21% during testing**, indicating a strong seasonal shift. At a 0.50 probability threshold, the random forest produced **no positive alerts** on the held-out period. These results do **not** establish a reliable operational warning system.
+Then open the local URL displayed by Streamlit. No API tokens or network requests are required to display the supplied summary metrics.
 
-The exact summary of our original run is in [`results/factual_summary.json`](results/factual_summary.json) and [`results/model_results.csv`](results/model_results.csv). Values may change if the public API records are subsequently updated.
+## Run the artifact consistency audit
 
-## How to run the notebook
+```bash
+python scripts/validate_results.py
+```
 
-1. Open [Google Colab](https://colab.research.google.com/).
-2. Choose **File → Upload notebook** and select [`notebooks/HeatWatch_Assignment1_Colab.ipynb`](notebooks/HeatWatch_Assignment1_Colab.ipynb).
-3. Click **Runtime → Run all**. The notebook downloads the selected records from NYC's public API, performs EDA, and compares the first models.
-4. The notebook creates charts, model score tables, and a ZIP of local results. **Do not upload the request-level CSV to the public repository.**
+The audit checks presence, basic schemas and some stated values. It **does not reproduce model training** or validate its fairness/causality claims.
 
-For a local Python environment, the required libraries are listed in [`requirements.txt`](requirements.txt). A live internet connection is necessary for downloading the public dataset.
+## Additional legacy panel found
 
-## Repository contents
+A separate user-supplied ZIP (`heatwatch_panel(2).zip`) contained `panel_building_winter.csv` (264,251 rows, 74,299 unique buildings). It **does not match** the current reported 183,417-building evaluation universe and appears to be a historical complaint-history-selected panel. The CSV is deliberately **not included in this public-ready package**. See [legacy panel audit](docs/LEGACY_PANEL_AUDIT.md) for evidence and cautions.
 
-- [`notebooks/`](notebooks/) — Colab notebook with fetching, EDA, and models
-- [`figures/`](figures/) — figures from the original analysis
-- [`results/`](results/) — aggregate summary and model scores (no individual requests)
-- [`docs/`](docs/) — Assignment 1 concept note and presentation
-- [`requirements.txt`](requirements.txt) — Python dependencies
+## To complete technical reproducibility
 
-## Limitations and responsible use
+1. Obtain the original Colab `.ipynb` notebooks or `.py` files for NYC 311, HPD, PLUTO, NOAA, ACS ingestion, temporal panel construction, HistGB training, H2, and evaluation.
+2. Remove or rotate any API tokens, passwords, personal data, home addresses and request-level records before publication.
+3. Include an exact environment/requirements file, fixed seeds and a documented data download procedure.
+4. Produce an anonymized/non-identifying per-building risk CSV **only if publication is permitted**, and state whether it is generated from the actual model.
+5. Re-run the label-permutation test (within winter, several seeds) and evaluate historical PLUTO/HPD snapshots.
+6. Add real Streamlit original source and an operational demo video if submitting as Assignment 2.
 
-- A closed request is not proof of a completed repair.
-- Missing closing dates are excluded; this can bias results.
-- The data cover reported NYC complaints, not every household with a heating problem.
-- Seasonal changes and poor positive-alert recall limit the first models.
-- Do not use this prototype to deny, postpone, or deprioritize a resident's service request.
-- The 72-hour cutoff is a project definition, not an official SLA or legal requirement.
+## Provenance
 
-**Next phase:** improve validation across heating seasons, adjust decision thresholds, and build a small interface that presents uncertainty clearly.
+See [DATA_SOURCES](docs/DATA_SOURCES.md), [LIMITATIONS](docs/LIMITATIONS.md), and [REVISION_LOG](docs/REVISION_LOG.md). Official data are cited but are not redistributed here.
+
+## Ethical use
+
+Do **not** use this academic ranking to deny municipal services, treat a complaint as proof of a heating failure, infer energy poverty, or automatically prioritize enforcement without human review. Neighborhood reporting biases and current-snapshot limitations remain important.
