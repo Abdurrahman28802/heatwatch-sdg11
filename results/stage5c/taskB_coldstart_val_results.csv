@@ -1,0 +1,5 @@
+model,n,pos_rate,ROC_AUC,PR_AUC,Brier,recall_top1pct,recall_top5pct,lift_top1pct
+LogReg | HPD + PLUTO (gecmis yok),133726,0.046,0.6825,0.1202,0.0429,0.0489,0.207,4.89
+HistGB | HPD + PLUTO (gecmis yok),133726,0.046,0.7042,0.1313,0.0422,0.0572,0.2143,5.72
+LogReg | yalniz PLUTO (gecmis yok),133726,0.046,0.6785,0.1169,0.0429,0.0476,0.2023,4.76
+HistGB | yalniz PLUTO (gecmis yok),133726,0.046,0.7015,0.1282,0.0422,0.0549,0.2138,5.49

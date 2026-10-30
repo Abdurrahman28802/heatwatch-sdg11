@@ -1,0 +1,3 @@
+grup,n,ROC,PR,Brier
+egitimde gorulen binalar (2024),91708,0.8847,0.714,0.0752
+hic gorulmemis binalar (2024),91709,0.8875,0.7225,0.0737

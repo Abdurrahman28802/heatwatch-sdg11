@@ -1,0 +1,16 @@
+# Private data, keys, and local output
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+data/raw/
+data/processed/
+*.joblib
+*.pkl
+*.parquet
+.DS_Store

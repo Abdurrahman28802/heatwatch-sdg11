@@ -1,0 +1,19 @@
+{
+  "pluto_rows": 858284,
+  "bbl_valid_share": 1.0,
+  "duplicate_bbl": 0,
+  "unique_bbl": 858284,
+  "missing_share": {
+    "yearbuilt": 0.047,
+    "numfloors": 0.0494,
+    "unitsres": 0.0008,
+    "bldgarea": 0.0006,
+    "bldgclass": 0.0005,
+    "bct2020": 0.001
+  },
+  "residential_lots_unitsres_ge1": 767563,
+  "universe_bbl": 183417,
+  "universe_in_pluto_share": 0.9931,
+  "pluto_residential_lots_in_universe_share": 0.2338,
+  "bbl311_in_pluto_share": 0.9955
+}
